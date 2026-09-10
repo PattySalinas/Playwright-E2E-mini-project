@@ -1,0 +1,156 @@
+========================================================================
+FlowDescription.txt
+TodoMVC Playwright - Test Case Generation Pipeline
+========================================================================
+Purpose:
+  Documents the end-to-end flow of this project: how test cases are
+  generated, the artifacts involved, the folder layout, and the key
+  rules that govern the pipeline. Keep this file in sync whenever the
+  pipeline, skills, artifacts, or rules change (see "Maintenance" below).
+
+App under test : https://todomvc.com/examples/react/dist/
+Test framework : Playwright (TypeScript), UI tests
+Last updated   : 2026-09-09 (added Playwright MCP + hl-to-playwright)
+
+
+------------------------------------------------------------------------
+1. OVERVIEW
+------------------------------------------------------------------------
+This project generates human-readable, ADO-style test cases for the
+TodoMVC React app and maintains Playwright automation for the same
+functionality. Test-case generation is driven by:
+  - A governing standards document (test-case-standards.md).
+  - Kiro skills in .kiro/skills/ that encode how each artifact is built.
+  - Existing Playwright specs used as ground truth for terminology,
+    selectors, and already-covered flows.
+
+
+------------------------------------------------------------------------
+2. PIPELINE STAGES
+------------------------------------------------------------------------
+Stage A - Understand context
+  Inputs : test-case-standards.md, tests/todo.spec.ts (existing spec),
+           the app URL, and the requested functionalities/acceptance
+           criteria.
+  Output : A confirmed list of scenarios to cover.
+
+Stage B - Generate high-level test cases  [skill: high-level-testcases]
+  - Produces scenario-level test cases (Summary + numbered steps + Tags).
+  - Titles start with "Verify"; every step has a "should" expected result.
+  - Shows all cases in chat for review BEFORE writing any file.
+  - On confirmation, writes to generatedTestCases/HL_{Title}.txt.
+
+Stage C - (Future) Low-level test cases   [skill: low-level-testcases]
+  - Not yet present in this project. When added, it will expand each
+    high-level scenario into detailed, step-by-step cases and write to
+    generatedTestCases/LL_{Title}.txt. Add it here when introduced.
+
+Stage D - Convert HL cases to Playwright   [skill: hl-to-playwright]
+  - Turns generatedTestCases/HL_{Title}.txt into runnable .spec.ts files
+    under tests/. One HL case -> one test(); HL titles kept verbatim
+    ("Verify ...") with a stable @HL-* traceability tag; each "should"
+    expected result becomes an expect() assertion.
+  - Selector strategy: prefer the Playwright MCP to verify locators on the
+    live app; otherwise reuse locators proven in tests/todo.spec.ts.
+  - Adds a beforeEach that navigates + clears localStorage for test
+    independence (persistence scenario excepted).
+  - Shows the full spec in chat for review BEFORE writing, then verifies
+    with `npx playwright test <file> --list`.
+
+  Supporting tool - Playwright MCP server
+    - Configured in .kiro/settings/mcp.json (server name: "playwright",
+      command: npx -y @playwright/mcp@latest). NOTE: that file is
+      write-protected in this workspace and must be added manually via the
+      command palette ("MCP") or the MCP Server view.
+    - Used at GENERATION time only (authoring/verifying selectors and
+      expected results against the live app). It does NOT run tests in CI.
+
+Stage E - Automation (Playwright execution)
+  - tests/todo-hl.spec.ts holds the automated HL cases (11 tests), one
+    test() per HL scenario, tagged @HL-*. The add-todo test also carries
+    the @sanityTest tag for a quick smoke run.
+  - tests/example.spec.ts holds the default Playwright starter tests.
+  - Run with the project's Playwright config (playwright.config.ts).
+    Reports land in playwright-report/; artifacts in test-results/.
+  - Runs the same way from VS Code, Kiro, and ADO CI (npx playwright test).
+
+
+------------------------------------------------------------------------
+3. ARTIFACTS & FOLDER LAYOUT
+------------------------------------------------------------------------
+  test-case-standards.md
+      Governing standards (auto-loaded). Defines title/expected-result/
+      completeness/format/coverage rules, the review requirement, file
+      naming, and FlowDescription maintenance rules.
+
+  .kiro/settings/mcp.json
+      Workspace MCP config. Declares the "playwright" MCP server used at
+      generation time to verify selectors/expected results on the live
+      app. Write-protected: add/edit manually (command palette "MCP").
+
+  .kiro/skills/
+      high-level-testcases.md
+          Skill that generates high-level test cases per the standards.
+      hl-to-playwright.md
+          Skill that converts HL_{Title}.txt cases into runnable
+          Playwright .spec.ts files under tests/, using the Playwright
+          MCP (preferred) or existing spec conventions for selectors.
+
+  TestSummary.md
+      At-a-glance summary of all test cases (title, type/tags, coverage
+      area, automation status, traceability tag) plus QA metrics
+      (counts by area, by type, by automation status). Update when test
+      cases are added, removed, or re-categorized.
+
+  generatedTestCases/
+      HL_{Title}.txt   High-level test case outputs.
+      LL_{Title}.txt   (Future) Low-level test case outputs.
+      Current file: HL_TodoMVC_MainFunctionalities.txt (12 HL cases).
+
+  generatedBugReports/
+      (Future) Defect reports, when a bug-reporting skill is added.
+
+  tests/
+      todo-hl.spec.ts  (Generated) Automated HL cases, one test() per HL
+                       scenario, tagged @HL-*; add-todo test also tagged
+                       @sanityTest. Created by hl-to-playwright.
+      example.spec.ts  Default Playwright starter tests.
+
+  playwright.config.ts   Playwright configuration.
+  playwright-report/     HTML report output.
+  test-results/          Traces, screenshots, videos from runs.
+
+
+------------------------------------------------------------------------
+4. KEY RULES (from test-case-standards.md)
+------------------------------------------------------------------------
+  - Title: every test case title must start with "Verify".
+  - Expected results: every step has one, phrased with "should",
+    describing what the system should do.
+  - Completeness: every case needs a Summary AND full numbered steps.
+  - Format: ADO Test Case style - numbered steps (one action + one
+    expected result each); free-text summary; free-form multiple tags.
+  - Coverage: one happy path per acceptance criterion; at least one
+    negative/edge case per criterion involving user input or a system
+    boundary. No performance/load cases unless explicitly requested.
+  - Review: always show generated content in chat before writing a file;
+    show exact payload before any ADO write; wait for confirmation.
+    Never bulk-create more than 10 test cases without a mid-way
+    confirmation checkpoint.
+  - Naming: HL_{Title}.txt for high-level, LL_{Title}.txt for low-level.
+
+
+------------------------------------------------------------------------
+5. MAINTENANCE
+------------------------------------------------------------------------
+This file MUST be updated whenever:
+  - A new skill/stage is added to the pipeline.
+  - An existing skill's steps or behavior change meaningfully.
+  - New supporting files or folders are introduced.
+  - Key rules or standards are added or modified.
+Any skill that modifies the pipeline is responsible for keeping this
+file in sync as part of the same change.
+
+========================================================================
+END OF FlowDescription.txt
+========================================================================

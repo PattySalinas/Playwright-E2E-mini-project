@@ -1,0 +1,242 @@
+========================================================================
+HIGH-LEVEL TEST CASES - TodoMVC React App
+========================================================================
+App under test : https://todomvc.com/examples/react/dist/
+Test type      : UI (Playwright)
+Standards ref  : test-case-standards.md
+Related spec   : tests/todo.spec.ts
+========================================================================
+
+
+------------------------------------------------------------------------
+HL_Verify a new todo can be added to the list
+------------------------------------------------------------------------
+Summary:
+  Validates the core "add todo" happy path. A user types a task into the
+  main input and presses Enter. This is the foundational functionality of
+  the app and is exercised in the existing tests/todo.spec.ts sanity test.
+  The new-todo field carries data-testid="text-input".
+
+Tags: functional, happy-path, todo-creation, Regression
+
+Steps:
+  1. Action: Navigate to https://todomvc.com/examples/react/dist/
+     Expected: The app should load and the "What needs to be done?" input
+               should be visible and empty.
+  2. Action: Type "Buy groceries" into the new-todo input and press Enter.
+     Expected: The system should add "Buy groceries" as a new item in the
+               todo list and should clear the input field.
+  3. Action: Observe the todo counter.
+     Expected: The system should display "1 item left".
+
+
+------------------------------------------------------------------------
+HL_Verify multiple todos can be added and appear in order
+------------------------------------------------------------------------
+Summary:
+  Validates that several todos can be created in sequence and are all
+  retained in the list in the order entered. Mirrors the multi-item setup
+  in tests/todo.spec.ts (Buy groceries, Go for walk, rest, Play, Pay bills).
+
+Tags: functional, happy-path, todo-creation
+
+Steps:
+  1. Action: Navigate to the app.
+     Expected: The app should load with an empty todo list.
+  2. Action: Add five todos: "Buy groceries", "Go for walk", "rest",
+             "Play", "Pay bills".
+     Expected: The system should display all five items in the list in the
+               order they were entered.
+  3. Action: Observe the todo counter.
+     Expected: The system should display "5 items left".
+
+
+------------------------------------------------------------------------
+HL_Verify a todo can be marked as completed
+------------------------------------------------------------------------
+Summary:
+  Validates that toggling a todo's checkbox marks it complete. Uses the
+  todo-item-toggle control. Completing an item should visually strike it
+  through and decrement the active counter.
+
+Tags: functional, happy-path, todo-completion, Regression
+
+Steps:
+  1. Action: Add a todo "Buy groceries".
+     Expected: The system should show "Buy groceries" as an active item and
+               should display "1 item left".
+  2. Action: Check the toggle for "Buy groceries".
+     Expected: The system should mark the item as completed and should
+               display it with a completed (strike-through) style.
+  3. Action: Observe the todo counter.
+     Expected: The system should display "0 items left".
+
+
+------------------------------------------------------------------------
+HL_Verify a completed todo can be reactivated
+------------------------------------------------------------------------
+Summary:
+  Validates that unchecking a completed todo returns it to the active
+  state. Confirms the toggle works in both directions.
+
+Tags: functional, happy-path, todo-completion
+
+Steps:
+  1. Action: Add a todo "Go for walk" and mark it completed.
+     Expected: The system should display "Go for walk" as completed and
+               should show "0 items left".
+  2. Action: Uncheck the toggle for "Go for walk".
+     Expected: The system should return the item to the active (not
+               completed) state.
+  3. Action: Observe the todo counter.
+     Expected: The system should display "1 item left".
+
+
+------------------------------------------------------------------------
+HL_Verify a todo can be deleted
+------------------------------------------------------------------------
+Summary:
+  Validates the delete (destroy) action that appears on hover. Uses the
+  "Delete todo" button. Removing an item should take it out of the list and
+  update the counter.
+
+Tags: functional, happy-path, todo-deletion, Regression
+
+Steps:
+  1. Action: Add two todos "Buy groceries" and "Pay bills".
+     Expected: The system should display both items and should show
+               "2 items left".
+  2. Action: Hover over "Buy groceries" and click its "Delete todo" button.
+     Expected: The system should remove "Buy groceries" from the list and
+               "Pay bills" should remain visible.
+  3. Action: Observe the todo counter.
+     Expected: The system should display "1 item left".
+
+
+------------------------------------------------------------------------
+HL_Verify an existing todo can be edited via double-click
+------------------------------------------------------------------------
+Summary:
+  Validates in-place editing. Double-clicking a todo enters edit mode;
+  typing new text and pressing Enter should persist the change.
+
+Tags: functional, happy-path, todo-editing
+
+Steps:
+  1. Action: Add a todo "rest".
+     Expected: The system should display "rest" in the list.
+  2. Action: Double-click the "rest" label.
+     Expected: The system should enter edit mode and should display an
+               editable input containing "rest".
+  3. Action: Replace the text with "rest well" and press Enter.
+     Expected: The system should update the item label to "rest well" and
+               should exit edit mode.
+
+
+------------------------------------------------------------------------
+HL_Verify the filters show All, Active, and Completed todos correctly
+------------------------------------------------------------------------
+Summary:
+  Validates the footer filter links (All / Active / Completed). Given a mix
+  of active and completed items, each filter should show only the matching
+  subset. Reflects the filter navigation in tests/todo.spec.ts.
+
+Tags: functional, happy-path, filtering, Regression
+
+Steps:
+  1. Action: Add "Go for walk" (leave active) and "Buy groceries" (mark
+             completed).
+     Expected: The system should display one active and one completed item.
+  2. Action: Click the "Active" filter.
+     Expected: The system should display only "Go for walk".
+  3. Action: Click the "Completed" filter.
+     Expected: The system should display only "Buy groceries".
+  4. Action: Click the "All" filter.
+     Expected: The system should display both "Go for walk" and
+               "Buy groceries".
+
+
+------------------------------------------------------------------------
+HL_Verify all todos can be toggled complete at once
+------------------------------------------------------------------------
+Summary:
+  Validates the "toggle all" chevron that marks every todo complete (and
+  back to active) in one action.
+
+Tags: functional, happy-path, bulk-actions
+
+Steps:
+  1. Action: Add three todos "Buy groceries", "Go for walk", "Play".
+     Expected: The system should display "3 items left".
+  2. Action: Click the "Toggle All" control.
+     Expected: The system should mark all three todos as completed and
+               should display "0 items left".
+  3. Action: Click the "Toggle All" control again.
+     Expected: The system should return all three todos to the active state
+               and should display "3 items left".
+
+
+------------------------------------------------------------------------
+HL_Verify completed todos are removed with Clear completed
+------------------------------------------------------------------------
+Summary:
+  Validates the "Clear completed" button that removes all completed items
+  in one click, leaving active items untouched. Reflects the "Clear
+  completed" action in tests/todo.spec.ts.
+
+Tags: functional, happy-path, bulk-actions, Regression
+
+Steps:
+  1. Action: Add "Go for walk" (active) and "rest" (completed).
+     Expected: The system should display one active and one completed item.
+  2. Action: Click "Clear completed".
+     Expected: The system should remove "rest" and "Go for walk" should
+               remain in the list.
+  3. Action: Observe the footer.
+     Expected: The system should hide the "Clear completed" button when no
+               completed items remain.
+
+
+------------------------------------------------------------------------
+HL_Verify an empty or whitespace-only todo is not added
+------------------------------------------------------------------------
+Summary:
+  Negative/edge case for the add-todo input boundary. Submitting an empty
+  string or only spaces should not create a list item. Covers the
+  user-input boundary required by the standards.
+
+Tags: functional, negative, Edge Case, todo-creation
+
+Steps:
+  1. Action: Navigate to the app.
+     Expected: The app should load with an empty todo list.
+  2. Action: Focus the new-todo input, press Enter without typing.
+     Expected: The system should not add any item and the list should
+               remain empty.
+  3. Action: Type only spaces "   " and press Enter.
+     Expected: The system should not add a whitespace-only item and the
+               list should remain empty.
+
+
+------------------------------------------------------------------------
+HL_Verify todos are not persisted after a page reload
+------------------------------------------------------------------------
+Summary:
+  Negative/edge case documenting that THIS TodoMVC React build does NOT
+  implement client-side persistence. Verified with the Playwright MCP:
+  after adding todos, localStorage remains empty and the todos are lost on
+  reload. This test intentionally asserts the ABSENCE of persistence so the
+  behavior is captured and regressions (in either direction) are caught.
+
+Tags: functional, negative, Edge Case, persistence
+
+Steps:
+  1. Action: Navigate to the app and add "Buy groceries" and "Pay bills".
+     Expected: The system should display both items in the todo list.
+  2. Action: Reload the page.
+     Expected: The system should NOT restore the todos; the list should be
+               empty and the "items left" counter should not be shown.
+
+========================================================================
+END OF HIGH-LEVEL TEST CASES (12 total)
+========================================================================
