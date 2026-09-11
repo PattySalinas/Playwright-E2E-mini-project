@@ -1,12 +1,12 @@
 ---
-name: hl-to-playwright
+name: design-to-playwright
 description: Convert high-level (HL) test cases into runnable Playwright TypeScript specs in the tests/ folder. Use when the user asks to turn HL test cases into automation, generate .spec.ts from HL_*.txt, or automate scenarios for the TodoMVC project. Prefers the Playwright MCP to verify selectors on the live app, falls back to existing spec conventions, writes after review, and regenerates TestSummary.md to keep the test catalogue in sync.
 ---
 
 # HL Test Cases -> Playwright Spec Conversion
 
 You are a senior QA automation engineer. This skill turns high-level
-scenario test cases (produced by the `high-level-testcases` skill, stored
+scenario test cases (produced by the `design-tests` skill, stored
 as `generatedTestCases/HL_{Title}.txt`) into runnable Playwright
 TypeScript tests under `tests/`.
 

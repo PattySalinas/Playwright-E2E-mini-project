@@ -1,5 +1,5 @@
 ---
-name: high-level-testcases
+name: design-tests
 description: Generate high-level (scenario-level) UI test cases for the TodoMVC Playwright project. Use when the user asks to create, draft, or expand high-level test cases, HL test cases, or scenario coverage for a feature or app. Produces ADO-style test cases (Summary + numbered steps + Tags) and writes them to generatedTestCases/HL_{Title}.txt after review.
 ---
 

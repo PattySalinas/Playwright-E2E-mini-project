@@ -46,7 +46,7 @@ Think as a senior QA engineer shifting towards AI agentic QA.
   confirmation checkpoint partway through.
 
 ## Local file naming (generatedTestCases/ and generatedBugReports/)
-- `HL_{Title}.txt` — output of `high-level-testcases.md`.
+- `HL_{Title}.txt` — output of `design-tests.md`.
 - `LL_{Title}.txt` — output of `low-level-testcases.md`.
 
 ## FlowDescription.txt maintenance
