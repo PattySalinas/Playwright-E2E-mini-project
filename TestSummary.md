@@ -75,6 +75,24 @@ npx playwright test --grep "@HL-todo-delete"
 npx playwright test tests/todo-hl.spec.ts --project=chromium
 ```
 
+### Local run + report scripts (npm)
+
+```bash
+# All-in-one local flow: run headed (chromium) -> archive single-file
+# report to reports/ -> open the report (blocks until Ctrl+C)
+npm run test:e2e:watch
+
+# Individual steps
+npm run test:e2e:headed    # headed chromium run, HTML reporter
+npm run test:e2e:archive   # save reports/report-<timestamp>.html (keeps last 5)
+npm run test:e2e:report    # open the last HTML report (blocks)
+npm run test:e2e           # plain run, all projects
+```
+
+Archived reports live in `reports/` (git-ignored), auto-pruned to the last 5.
+`test:e2e:watch` archives and opens the report even when tests fail, and
+still exits with the test run's status code.
+
 ---
 
 ## Notes / findings

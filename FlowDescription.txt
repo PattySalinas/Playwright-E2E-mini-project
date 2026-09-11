@@ -65,13 +65,19 @@ Stage D - Convert HL cases to Playwright   [skill: hl-to-playwright]
     - Used at GENERATION time only (authoring/verifying selectors and
       expected results against the live app). It does NOT run tests in CI.
 
-Stage E - Automation (Playwright execution)
+Stage E - Automation (Playwright execution)  [skill: run-e2e-tests]
   - tests/todo-hl.spec.ts holds the automated HL cases (11 tests), one
     test() per HL scenario, tagged @HL-*. The add-todo test also carries
     the @sanityTest tag for a quick smoke run.
   - tests/example.spec.ts holds the default Playwright starter tests.
   - Run with the project's Playwright config (playwright.config.ts).
     Reports land in playwright-report/; artifacts in test-results/.
+  - npm scripts (local): test:e2e, test:e2e:headed, test:e2e:report,
+    test:e2e:archive, test:e2e:watch (run headed -> archive single-file
+    report to reports/ -> show report). test:e2e:watch always archives and
+    shows even when tests fail. show-report BLOCKS until Ctrl+C.
+  - Archived single-file reports land in reports/ (git-ignored), pruned to
+    the last 5 by scripts/archive-report.mjs.
   - Runs the same way from VS Code, Kiro, and ADO CI (npx playwright test).
 
 
@@ -95,6 +101,20 @@ Stage E - Automation (Playwright execution)
           Skill that converts HL_{Title}.txt cases into runnable
           Playwright .spec.ts files under tests/, using the Playwright
           MCP (preferred) or existing spec conventions for selectors.
+          Also regenerates TestSummary.md after any spec change.
+      run-e2e-tests.md
+          Skill that drives local test execution + HTML report handling
+          via the npm test:e2e:* scripts (headed run, archive, show).
+
+  scripts/
+      archive-report.mjs
+          Node script: copies playwright-report/index.html to
+          reports/report-<timestamp>.html (single-file archive) and prunes
+          to the last 5. Invoked by `npm run test:e2e:archive`.
+      run-e2e-watch.mjs
+          Node runner behind `npm run test:e2e:watch`: run headed ->
+          archive -> show report. Always archives/shows even on test
+          failure, and exits with the test run's status code.
 
   TestSummary.md
       At-a-glance summary of all test cases (title, type/tags, coverage
